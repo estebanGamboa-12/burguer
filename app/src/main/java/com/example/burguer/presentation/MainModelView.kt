@@ -20,7 +20,7 @@ class MainModelView (
     val uiState: LiveData<UiState> = _uiState
 
         fun saveBurguer(name:String, minutes:String, porcentajeTop:String,porcentajeBottom:String ){
-            saveBurguerUseCase(SaveBurguerUseCase.Input(name,minutes,porcentajeTop,porcentajeBottom)).fold(
+            saveBurguerUseCase(name,minutes,porcentajeTop,porcentajeBottom).fold(
                 { responseError(it) },
                 { responseSuccess(it) }
             )

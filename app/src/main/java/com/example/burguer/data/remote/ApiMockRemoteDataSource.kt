@@ -8,6 +8,6 @@ import com.iesam.kotlintrainning.right
 class ApiMockRemoteDataSource() {
 
     fun getBurguer():Either<ErrorApp,Burguer>{
-        return Burguer(0,"Burguer It","22-30","-17","98").right()
+        return Burguer(0,"Burguer 85 ","22-30","-17","98").right()
     }
 }

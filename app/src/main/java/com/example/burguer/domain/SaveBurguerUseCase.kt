@@ -5,9 +5,9 @@ import com.iesam.kotlintrainning.Either
 
 class SaveBurguerUseCase (private val repository:BurguerRepository){
 
-    operator  fun invoke(input: Input):Either<ErrorApp,Boolean>{
-        return  repository.save(input)
+    operator  fun invoke( name:String,  minutes:String, percentTop:String, percentBottom:String):Either<ErrorApp,Boolean>{
+        return  repository.save(name,minutes,percentTop,percentBottom)
     }
 
-    data class Input(val name:String,val minutes:String,val percentTop:String,val percentBottom:String)
+
 }

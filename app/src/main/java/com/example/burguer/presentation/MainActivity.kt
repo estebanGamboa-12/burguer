@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import com.example.burguer.R
 import com.example.burguer.data.BurguerDataRepository
 import com.example.burguer.data.local.XmlLocalDataSource
+import com.example.burguer.data.remote.ApiMockRemoteDataSource
 import com.example.burguer.domain.Burguer
 import com.example.burguer.domain.GetBurguerUseCase
 import com.example.burguer.domain.SaveBurguerUseCase
@@ -19,8 +20,9 @@ class MainActivity : AppCompatActivity() {
 
     val viewModel:MainModelView by lazy{
         MainModelView(
-            SaveBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this))),
-            GetBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this))),
+            SaveBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this), ApiMockRemoteDataSource())),
+            GetBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this), ApiMockRemoteDataSource()))
+
         )
     }
 

@@ -13,14 +13,14 @@ import com.iesam.kotlintrainning.right
 class XmlLocalDataSource (private  val context: Context){
     private val sharedPref = context.getSharedPreferences("burguers", Context.MODE_PRIVATE)
 
-    fun saveBurguer(input: SaveBurguerUseCase.Input):Either<ErrorApp,Boolean>{
+    fun saveBurguer(name:String,  minutes:String, percentTop:String, percentBottom:String):Either<ErrorApp,Boolean>{
         return try {
             with(sharedPref.edit()){
                 putInt("id", (1..100).random())
-                putString("username", input.name)
-                putString("surname", input.minutes)
-                putString("surname", input.percentTop)
-                putString("surname", input.percentBottom)
+                putString("username", name)
+                putString("surname", minutes)
+                putString("surname", percentTop)
+                putString("surname", percentBottom)
                 apply()
             }
             true.right()
