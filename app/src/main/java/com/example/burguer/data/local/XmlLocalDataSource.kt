@@ -11,25 +11,23 @@ class XmlLocalDataSource(
     private val context: Context,
     private val serialization: JsonSerialization
 ) {
-    private val sharedPref = context.getSharedPreferences("Burguers", Context.MODE_PRIVATE)
-    private val burguerId = "burguer_list"
+    private val sharedPref = context.getSharedPreferences("burguer", Context.MODE_PRIVATE)
+    private val burguerId = "burguerId1"
 
-    fun getBurguers(): Either<ErrorApp, List<Burguer>> {
-        val jsonBurguerList = sharedPref.getString(burguerId, null)
+    fun getBurguers(): Either<ErrorApp, Burguer> {
+        val jsonBurguer = sharedPref.getString(burguerId, null)
 
-        return if (jsonBurguerList != null) {
-            val burguerList = serialization.fromJson(jsonBurguerList, Array<Burguer>::class.java).toList()
+        jsonBurguer?.let {
+            return serialization.fromJson(it, Burguer::class.java).right()
+        }
+        return ErrorApp.DataError.left()
+    }
 
-            Log.d("@dev", "Burguer list obtenida de SharedPreferences: $burguerList")
-            burguerList.right()
-        } else {
-            ErrorApp.DataError.left()
+    fun saveBurguers(burguer: Burguer) {
+        sharedPref.edit().apply() {
+            putString(burguerId, serialization.toJson(burguer, Burguer::class.java))
+            apply()
+        }
+
         }
     }
-
-    fun saveBurguers(burguerList: List<Burguer>) {
-        val jsonBurguerList = serialization.toJson(burguerList)
-        Log.d("@dev", "Burguer list a guardar en SharedPreferences: $jsonBurguerList")
-        sharedPref.edit().putString(burguerId, jsonBurguerList).apply()
-    }
-}

@@ -6,5 +6,5 @@ import com.example.burguer.app.Either
 interface BurguerRepository {
 
 
-    suspend fun obtain(): Either<ErrorApp, List<Burguer>>
+    suspend fun obtain(): Either<ErrorApp, Burguer>
 }

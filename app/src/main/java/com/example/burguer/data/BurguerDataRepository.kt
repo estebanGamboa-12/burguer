@@ -12,7 +12,7 @@ import com.example.burguer.app.Either
     private val apiMockRemoteDataSource: ApiMockRemoteDataSource
 ):BurguerRepository {
 
-    override suspend fun obtain(): Either<ErrorApp, List<Burguer>> {
+    override suspend fun obtain(): Either<ErrorApp, Burguer> {
         var chat=localDataSource.getBurguers()
         chat.mapLeft {
             return apiMockRemoteDataSource.getBurguer().map {

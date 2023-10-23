@@ -5,11 +5,11 @@ class GsonSerialization : JsonSerialization {
 
     private val gson = Gson()
 
-    override fun <T> toJson(obj: T): String {
-        return gson.toJson(obj)
+    override fun <T> toJson(obj: T, typeClass: Class<T>): String {
+        return gson.toJson(obj, typeClass)
     }
 
-    override fun <T> fromJson(json: String, type: Class<T>): T {
-        return gson.fromJson(json, type)
+    override fun <T> fromJson(json: String, typeClass: Class<T>): T {
+        return gson.fromJson(json, typeClass)
     }
-} 
+}

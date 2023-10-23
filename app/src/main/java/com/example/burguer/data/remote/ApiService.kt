@@ -6,5 +6,5 @@ import retrofit2.http.GET
 
 interface ApiService {
     @GET("burguer-view.json")
-    suspend fun getBurguers():Response<List<Burguer>>
+    suspend fun getBurguers():Response<BurguerApiModel>
 }

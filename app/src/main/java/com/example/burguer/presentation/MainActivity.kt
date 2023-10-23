@@ -57,14 +57,14 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
     //se introduce el texto en la vista.
-    private fun bindData(burguer: List<Burguer>){
+    private fun bindData(burguer: Burguer){
 
         binding.apply {
-            imagen.load(burguer[0].url)
-            title.text=burguer[0].title
-            eta.text=burguer[0].eta
-            discount.text=burguer[0].discount
-            rate.text=burguer[0].rate
+            imagen.load(burguer.url)
+            title.text=burguer.title
+            eta.text=burguer.eta
+            discount.text=burguer.discount
+            rate.text=burguer.rate
 
         }
 

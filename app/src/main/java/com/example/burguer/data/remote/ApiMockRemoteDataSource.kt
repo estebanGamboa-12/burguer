@@ -5,37 +5,38 @@ import com.example.burguer.domain.Burguer
 import com.example.burguer.app.Either
 import com.example.burguer.app.left
 import com.example.burguer.app.right
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.UnknownHostException
+import java.util.concurrent.TimeoutException
 
 class ApiMockRemoteDataSource() {
 
-    suspend fun getBurguer(): Either<ErrorApp, List<Burguer>> {
+    suspend fun getBurguer(): Either<ErrorApp, Burguer> {
 
-        try {
+
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://dam.sitehub.es/curso-2023-2024/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
-            val service = retrofit.create(ApiService::class.java)
+            val service:ApiService = retrofit.create(ApiService::class.java)
 
-            val response = service.getBurguers()
 
-            if (response.isSuccessful) {
-                val itemsList = response.body()
-                if (itemsList != null && itemsList.isNotEmpty()) {
-                    return itemsList.right()
-                } else {
-                    // Manejar el caso en el que la lista está vacía
-                    return ErrorApp.DataError.left()
-                }
+        try {
+            val repos: Response<BurguerApiModel> = service.getBurguers()
+
+            if (repos.isSuccessful) {
+                return repos.body()!!.toModel().right()
             } else {
-                // Manejar el caso en el que la respuesta no es exitosa
                 return ErrorApp.NetworkError.left()
             }
-        } catch (e: Exception) {
-            // Manejar errores de red u otros errores
+        } catch (ex: TimeoutException) {
+            return ErrorApp.NetworkError.left()
+        } catch (ex: UnknownHostException) {
+            return ErrorApp.NetworkError.left()
+        } catch (ex: Exception) {
             return ErrorApp.NetworkError.left()
         }
     }

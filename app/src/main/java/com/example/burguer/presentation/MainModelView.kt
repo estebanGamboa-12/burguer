@@ -33,12 +33,12 @@ class MainModelView (
 
     }
 
-    private fun responseGetUserSuccess(burguer: List<Burguer>) {
+    private fun responseGetUserSuccess(burguer: Burguer) {
         _uiState.postValue(UiState(burguer = burguer))
     }
     data class UiState(
         val errorApp: ErrorApp? = null,
         val isLoading: Boolean = false,
-        val burguer: List<Burguer>? = null
+        val burguer: Burguer ?= null
     )
     }
