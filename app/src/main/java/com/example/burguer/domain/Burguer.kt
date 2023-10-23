@@ -1,4 +1,9 @@
 package com.example.burguer.domain
 
-data class Burguer (val id:Int,val name:String,val minutes:String,val percentTop:String,val percentBottom:String) {
-}
+data class Burguer (
+    val title:String,
+    val discount:String,
+    val rate:String,
+    val eta:String,
+    val url:String
+)

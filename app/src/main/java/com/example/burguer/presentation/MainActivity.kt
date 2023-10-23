@@ -1,104 +1,76 @@
 package com.example.burguer.presentation
 
+import GsonSerialization
+import XmlLocalDataSource
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.example.burguer.R
 import com.example.burguer.data.BurguerDataRepository
-import com.example.burguer.data.local.XmlLocalDataSource
 import com.example.burguer.data.remote.ApiMockRemoteDataSource
+import com.example.burguer.databinding.ActivityMainBinding
 import com.example.burguer.domain.Burguer
 import com.example.burguer.domain.GetBurguerUseCase
-import com.example.burguer.domain.SaveBurguerUseCase
+import com.example.burguer.app.extension.load
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
     val viewModel:MainModelView by lazy{
         MainModelView(
-            SaveBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this), ApiMockRemoteDataSource())),
-            GetBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this), ApiMockRemoteDataSource()))
+            GetBurguerUseCase(BurguerDataRepository(XmlLocalDataSource(this,GsonSerialization()), ApiMockRemoteDataSource()))
 
         )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setupView()
+        setupBinding()
         setupObservers()
-        recoverData()
         viewModel.loadBurguer()
     }
 
+    private lateinit var binding: ActivityMainBinding
+
+    private fun setupBinding(){
+        binding=ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+    }
     private  fun setupView(){
-        val actionButtonSave=findViewById<Button>(R.id.action_save)
-        actionButtonSave.setOnClickListener {
-        viewModel.saveBurguer(
-            getBurguerInput(),
-            getMinutesInput(),
-            getPercentBottomInput(),
-            getPercentTopInput())
-            Log.d("@dev", getMinutesInput()+ getBurguerInput() +getPercentBottomInput()+getPercentTopInput())
-
-        }
-
     }
-    private fun recoverData(){
-
-        val actionButtonRecover=findViewById<Button>(R.id.action_recover)
-        actionButtonRecover.setOnClickListener {
-            viewModel.loadBurguer()
-        }
-
-    }
-
     private fun setupObservers(){
         val observer=Observer<MainModelView.UiState>{
-            it.burguer?.apply {
-                bindData(this)
+            it.errorApp?.apply {
+                showError(it)
+            }
+            it.burguer?.let {
+                bindData(it)
             }
         }
         viewModel.uiState.observe(this,observer)
     }
+    private fun showError(error: MainModelView.UiState) {
+        Snackbar.make(
+            binding.root,
+            getString(R.string.error),
+            Snackbar.LENGTH_SHORT
+        ).show()
+    }
     //se introduce el texto en la vista.
-    private fun bindData(burguer: Burguer){
-        setBurguerInput(burguer.name)
-        setMinutesInput(burguer.minutes)
-        setPercentBottomInput(burguer.percentBottom)
-        setPercentTopInput(burguer.percentTop)
+    private fun bindData(burguer: List<Burguer>){
+
+        binding.apply {
+            imagen.load(burguer[0].url)
+            title.text=burguer[0].title
+            eta.text=burguer[0].eta
+            discount.text=burguer[0].discount
+            rate.text=burguer[0].rate
+
+        }
 
     }
 
 
-    private fun setBurguerInput(burguer:String){
-        findViewById<TextView>(R.id.name_burguer).setText(burguer)
-    }
-    private fun setMinutesInput(minutes:String){
-        findViewById<TextView>(R.id.porcentaje).setText(minutes + "min")
-    }
-    private fun setPercentTopInput( percentTop:String){
-        findViewById<TextView>(R.id.name_porcentajeTop).setText(percentTop +"%")
-    }
-    private fun setPercentBottomInput(percentBottom:String){
-        findViewById<TextView>(R.id.name_porcentajeBottom).setText(percentBottom + "%")
-    }
 
 
-
-
-
-    //se recogen todos los inputs
-    private fun getBurguerInput():String=
-        findViewById<EditText>(R.id.label_name_Burguer).text.toString()
-    private fun getMinutesInput():String=
-        findViewById<EditText>(R.id.label_minutes).text.toString()
-    private fun getPercentBottomInput():String=
-        findViewById<EditText>(R.id.label_porcentajeBottom).text.toString()
-    private fun getPercentTopInput():String=
-        findViewById<EditText>(R.id.label_porcentajeTop).text.toString()
 }

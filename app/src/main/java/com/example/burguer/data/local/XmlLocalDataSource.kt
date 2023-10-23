@@ -1,52 +1,35 @@
-package com.example.burguer.data.local
-
 import android.content.Context
+import android.util.Log
 import com.example.burguer.app.ErrorApp
 import com.example.burguer.domain.Burguer
-import com.example.burguer.domain.SaveBurguerUseCase
-import com.iesam.kotlintrainning.Either
-import com.iesam.kotlintrainning.left
-import com.iesam.kotlintrainning.right
+import com.example.burguer.app.Either
+import com.example.burguer.app.left
+import com.example.burguer.app.right
+import com.example.burguer.app.serialization.JsonSerialization
 
+class XmlLocalDataSource(
+    private val context: Context,
+    private val serialization: JsonSerialization
+) {
+    private val sharedPref = context.getSharedPreferences("Burguers", Context.MODE_PRIVATE)
+    private val burguerId = "burguer_list"
 
+    fun getBurguers(): Either<ErrorApp, List<Burguer>> {
+        val jsonBurguerList = sharedPref.getString(burguerId, null)
 
-class XmlLocalDataSource (private  val context: Context){
-    private val sharedPref = context.getSharedPreferences("burguers", Context.MODE_PRIVATE)
+        return if (jsonBurguerList != null) {
+            val burguerList = serialization.fromJson(jsonBurguerList, Array<Burguer>::class.java).toList()
 
-    fun saveBurguer(name:String,  minutes:String, percentTop:String, percentBottom:String):Either<ErrorApp,Boolean>{
-        return try {
-            with(sharedPref.edit()){
-                putInt("id", (1..100).random())
-                putString("username", name)
-                putString("surname", minutes)
-                putString("surname", percentTop)
-                putString("surname", percentBottom)
-                apply()
-            }
-            true.right()
-        }catch (ex:Exception){
-            ErrorApp.UnkowError.left()
+            Log.d("@dev", "Burguer list obtenida de SharedPreferences: $burguerList")
+            burguerList.right()
+        } else {
+            ErrorApp.DataError.left()
         }
     }
 
-    //val id:Int,
-    // val name:String,
-    // val minutes:String
-    // ,val percentTop:String,
-    // val percentBottom:String
-    fun findBurguer(): Either<ErrorApp, Burguer> {
-        return try {
-            Burguer(
-                sharedPref.getInt("id",0),
-                sharedPref.getString("name", "")!!,
-                sharedPref.getString("minutes", "")!!,
-                sharedPref.getString("percentTop", "")!!,
-                sharedPref.getString("percentBottom", "")!!
-            ).right()
-        }catch (ex:Exception){
-            return ErrorApp.UnkowError.left()
-        }
+    fun saveBurguers(burguerList: List<Burguer>) {
+        val jsonBurguerList = serialization.toJson(burguerList)
+        Log.d("@dev", "Burguer list a guardar en SharedPreferences: $jsonBurguerList")
+        sharedPref.edit().putString(burguerId, jsonBurguerList).apply()
     }
-
-
 }

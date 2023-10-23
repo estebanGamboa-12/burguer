@@ -1,4 +1,4 @@
-package com.iesam.kotlintrainning
+package com.example.burguer.app
 
 sealed class Either<out L, out R> {
 

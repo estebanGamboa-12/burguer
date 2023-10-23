@@ -1,11 +1,11 @@
 package com.example.burguer.domain
 
 import com.example.burguer.app.ErrorApp
-import com.iesam.kotlintrainning.Either
+import com.example.burguer.app.Either
 
 class GetBurguerUseCase(private val repository: BurguerRepository) {
 
-    operator fun invoke(): Either<ErrorApp,Burguer>{
+    operator suspend fun invoke(): Either<ErrorApp, List<Burguer>> {
         return  repository.obtain()
     }
 }
